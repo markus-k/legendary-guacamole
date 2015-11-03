@@ -2,7 +2,7 @@ BUILDDIR = build
 OBJDIR = ${BUILDDIR}/obj
 SRCDIR = src
 
-SRCS = start.S main.c console.c
+SRCS = start.S main.c console.c string.c
 OBJS = $(addprefix ${OBJDIR}/,$(addsuffix .o,$(basename ${SRCS})))
 
 KERNEL = ${BUILDDIR}/kernel
@@ -11,8 +11,8 @@ CC = gcc
 LD = ld
 
 ASFLAGS = -m32
-CFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -g
-LDFLAGS = -melf_i386 -Ttext=0x100000
+CFLAGS = -m32 -Wall -fno-stack-protector -fno-builtin -fno-builtin-function -nostdinc --std=c99 -g
+LDFLAGS = -melf_i386 -Ttext=0x100000 -g
 
 all: ${BUILDDIR} ${OBJDIR} ${KERNEL}
 

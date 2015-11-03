@@ -1,23 +1,26 @@
 #include "console.h"
+#include "string.h"
 
 uint16_t cursor_x = 0;
 uint16_t cursor_y = 0;
 uint8_t color = 0x07;
 
-void kclear() {
-	uint8_t *video = (uint8_t *)CONSOLE_ADDR;
-	int i;
+#define xyoffset(x, y) ((y) * CONSOLE_WIDTH + (x))
 
-	for (i = 0; i < 2 * CONSOLE_WIDTH * CONSOLE_HEIGHT; i++) {
-		video[i] = 0x00;
-	}
+void kclear() {
+	memset((void *)CONSOLE_ADDR, 0x00, 2 * CONSOLE_WIDTH * CONSOLE_HEIGHT);
 }
 
 void kputc(char c) {
 	uint8_t *video = (uint8_t *)CONSOLE_ADDR;
 
-	video[2 * (cursor_y * CONSOLE_WIDTH + cursor_x)] = c;
-	video[2 * (cursor_y * CONSOLE_WIDTH + cursor_x) + 1] = color;
+	if (cursor_x >= CONSOLE_WIDTH || cursor_y >= CONSOLE_HEIGHT) {
+		// don't write off-screen.
+		return;
+	}
+
+	video[2 * xyoffset(cursor_x, cursor_y)] = c;
+	video[2 * xyoffset(cursor_x, cursor_y) + 1] = color;
 }
 
 void kprintf(char *str) {
@@ -42,5 +45,19 @@ void kprintf(char *str) {
 					cursor_x = 0;
 				}
 		}
+
+		if (cursor_y >= CONSOLE_HEIGHT) {
+			cursor_y = CONSOLE_HEIGHT - 1;
+			kscroll();
+		}
+
 	}
+}
+
+void kscroll() {
+	uint8_t *video = (uint8_t *)CONSOLE_ADDR;
+	uint8_t *video_row2 = video + 2 * xyoffset(0, 1);
+
+	memmove(video, video_row2, 2 * CONSOLE_WIDTH * (CONSOLE_HEIGHT - 1));
+	memset(video + 2 * xyoffset(0, CONSOLE_HEIGHT - 1), 0x00, 2 * CONSOLE_WIDTH);
 }
