@@ -1,12 +1,18 @@
+#include "multiboot.h"
+#include "pmm.h"
 #include "console.h"
 #include "gdt.h"
 #include "idt.h"
 #include "pic.h"
 
-void init(void *multiboot_info) {
+void init(struct multiboot_info *multiboot_info) {
 	kclear();
 	kprintf("Hello World.\n");
-	kprintf("Now starting up\n\n");
+	kprintf("Now starting up.\n\n");
+
+	pmm_init(multiboot_info);
+
+	kprintf("Test: %s, %c, %d, 0x%x\n", "Teststr", '!', 1234567890, 49358);
 
 	gdt_init();
 	kprintf("GDT loaded\n");
@@ -17,6 +23,7 @@ void init(void *multiboot_info) {
 	pic_remap_interrupts();
 	kprintf("PIC remapped\n");
 
+	kprintf("Now enabling interrupts\n");
 	asm volatile("sti");
 
 	while (1);
