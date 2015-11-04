@@ -16,8 +16,12 @@
 .global _start
 _start:
 	mov $kernel_stack, %esp
-
+	push %ebx // push pointer to multiboot struct
 	call init
+loop:
+	cli
+	hlt
+	jmp loop
 
 // 8kb kernel stack
 .section .bss
