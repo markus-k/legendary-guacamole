@@ -2,6 +2,7 @@
 #define _KERNEL_CONSOLE_H
 
 #include "stdint.h"
+#include "stdarg.h"
 
 #define CONSOLE_ADDR	0xb8000
 #define CONSOLE_WIDTH	80
@@ -10,7 +11,9 @@
 
 void kclear();
 void kputc(char c);
-void kprintf(char *str);
+void kputs(char *str);
+void kputi(uint32_t val, uint8_t base);
+void kprintf(char *str, ...);
 void kscroll();
 
 #endif

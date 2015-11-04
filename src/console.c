@@ -19,39 +19,90 @@ void kputc(char c) {
 		return;
 	}
 
-	video[2 * xyoffset(cursor_x, cursor_y)] = c;
-	video[2 * xyoffset(cursor_x, cursor_y) + 1] = color;
+	switch (c) {
+		case '\n':
+			cursor_y++;
+			cursor_x = 0;
+			break;
+		case '\r':
+			cursor_x = 0;
+			break;
+		default:
+			video[2 * xyoffset(cursor_x, cursor_y)] = c;
+			video[2 * xyoffset(cursor_x, cursor_y) + 1] = color;
+			cursor_x++;
+			if (cursor_x >= CONSOLE_WIDTH) {
+				cursor_y++;
+				cursor_x = 0;
+			}
+	}
+
+	if (cursor_y >= CONSOLE_HEIGHT) {
+		cursor_y = CONSOLE_HEIGHT - 1;
+		kscroll();
+	}
 }
 
-void kprintf(char *str) {
+void kputs(char *str) {
+	char c;
+	while ((c = *str++) != '\0') {
+		kputc(c);
+	}
+}
+
+void kputi(uint32_t val, uint8_t base) {
+	static const char *chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	int i = 0;
+	char buf[32];
+
+	while (val) {
+		uint32_t rem = val % base;
+		buf[i] = chars[rem];
+		val = val / base;
+		i++;
+	}
+
+	while (i--) {
+		kputc(buf[i]);
+	}
+}
+
+void kprintf(char *str, ...) {
+	va_list ap;
 	int i;
+
+	va_start(ap, str);
 
 	for (i = 0; str[i] != '\0'; i++) {
 		char c = str[i];
 
-		switch (c) {
-			case '\n':
-				cursor_y++;
-				cursor_x = 0;
-				break;
-			case '\r':
-				cursor_x = 0;
-				break;
-			default:
-				kputc(c);
-				cursor_x++;
-				if (cursor_x >= CONSOLE_WIDTH) {
-					cursor_y++;
-					cursor_x = 0;
-				}
-		}
+		if (c == '%' && str[i + 1] != '\0') {
+			char nextc = str[i + 1];
 
-		if (cursor_y >= CONSOLE_HEIGHT) {
-			cursor_y = CONSOLE_HEIGHT - 1;
-			kscroll();
+			switch (nextc) {
+				case '%':
+					kputc('%');
+					break;
+				case 'c':
+					kputc((char)va_arg(ap, int));
+					break;
+				case 's':
+					kputs(va_arg(ap, char *));
+					break;
+				case 'd':
+					kputi(va_arg(ap, int), 10);
+					break;
+				case 'x':
+					kputi(va_arg(ap, int), 16);
+					break;
+			}
+			i++; // we already read the next char, so i++
+		} else {
+			kputc(c);
 		}
-
 	}
+
+	va_end(ap);
 }
 
 void kscroll() {
