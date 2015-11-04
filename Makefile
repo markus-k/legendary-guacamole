@@ -11,8 +11,8 @@ CC = gcc
 LD = ld
 
 ASFLAGS = -m32
-CFLAGS = -m32 -Wall -fno-stack-protector -fno-builtin -fno-builtin-function -nostdinc --std=c99 -g
-LDFLAGS = -melf_i386 -Ttext=0x100000 -g
+CFLAGS = -m32 -Wall -fno-stack-protector -fno-builtin -fno-builtin-function -nostdinc --std=gnu99 -g
+LDFLAGS = -melf_i386 -Tldconf -g
 
 all: ${BUILDDIR} ${OBJDIR} ${KERNEL}
 
@@ -32,6 +32,6 @@ ${BUILDDIR}:
 	mkdir -p ${BUILDDIR}
 
 clean:
-	rm -f ${OBJS}
+	rm -f ${OBJS} ${KERNEL}
 
 .PHONY: clean
