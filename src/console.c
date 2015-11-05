@@ -55,11 +55,16 @@ void kputi(uint32_t val, uint8_t base) {
 	int i = 0;
 	char buf[32];
 
-	while (val) {
-		uint32_t rem = val % base;
-		buf[i] = chars[rem];
-		val = val / base;
+	if (val == 0) {
+		buf[0] = chars[0];
 		i++;
+	} else {
+		while (val) {
+			uint32_t rem = val % base;
+			buf[i] = chars[rem];
+			val = val / base;
+			i++;
+		}
 	}
 
 	while (i--) {
