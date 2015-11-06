@@ -2,7 +2,7 @@ BUILDDIR = build
 OBJDIR = ${BUILDDIR}/obj
 SRCDIR = src
 
-SRCS = start.S main.c console.c string.c gdt.c idt.c interrupt.c intr.S pic.c pmm.c
+SRCS = start.S main.c console.c string.c gdt.c idt.c interrupt.c intr.S pic.c pmm.c kbc.c
 OBJS = $(addprefix ${OBJDIR}/,$(addsuffix .o,$(basename ${SRCS})))
 
 KERNEL = ${BUILDDIR}/kernel

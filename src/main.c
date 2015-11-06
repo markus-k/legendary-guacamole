@@ -4,6 +4,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "pic.h"
+#include "kbc.h"
 
 void init(struct multiboot_info *multiboot_info) {
 	kclear();
@@ -25,6 +26,9 @@ void init(struct multiboot_info *multiboot_info) {
 
 	kprintf("Now enabling interrupts\n");
 	asm volatile("sti");
+
+	kprintf("KBC init\n");
+	kbc_init();
 
 	while (1);
 }
