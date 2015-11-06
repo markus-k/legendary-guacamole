@@ -3,6 +3,14 @@
 
 #include "stdint.h"
 
+#define IRQ_REG_OK		0x00
+#define IRQ_REG_ERR_INUSE	0x10
+
+typedef void (*irq_handler_fn)(void);
+
+int register_irq_handler(int irq, irq_handler_fn handler);
+void unregister_irq_handler(int irq);
+
 struct cpu_state {
 	uint32_t eax;
 	uint32_t ebx;
