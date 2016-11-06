@@ -2,3 +2,7 @@ build
 *.o
 
 qemuerr.log
+
+# crap emacs leaves everywhere
+\#*\#
+*~

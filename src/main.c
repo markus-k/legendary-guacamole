@@ -1,5 +1,6 @@
 #include "multiboot.h"
-#include "pmm.h"
+#include "pageframe.h"
+#include "paging.h"
 #include "console.h"
 #include "gdt.h"
 #include "idt.h"
@@ -11,7 +12,7 @@ void init(struct multiboot_info *multiboot_info) {
 	kprintf("Hello World.\n");
 	kprintf("Now starting up.\n\n");
 
-	pmm_init(multiboot_info);
+	pfa_init(multiboot_info);
 
 	kprintf("Test: %s, %c, %d, 0x%x\n", "Teststr", '!', 1234567890, 49358);
 
@@ -26,6 +27,9 @@ void init(struct multiboot_info *multiboot_info) {
 
 	kprintf("Now enabling interrupts\n");
 	asm volatile("sti");
+
+	kprintf("Enabling paging\n");
+	paging_init();
 
 	kprintf("KBC init\n");
 	kbc_init();
