@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "stdarg.h"
 
-#define CONSOLE_ADDR	0xb8000
+#define CONSOLE_ADDR	(0xb8000 + KERNEL_BASE)
 #define CONSOLE_WIDTH	80
 #define CONSOLE_HEIGHT	25
 #define CONSOLE_SIZE	(2 * CONSOLE_WIDTH * CONSOLE_HEIGHT)
