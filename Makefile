@@ -12,7 +12,7 @@ LD = ld
 
 ASFLAGS = -m32 -DKERNEL_BASE=0xC0000000
 CFLAGS = -m32 -Wall -fno-stack-protector -fno-builtin -fno-builtin-function -nostdinc --std=gnu99 -g -DKERNEL_BASE=0xC0000000
-LDFLAGS = -melf_i386 -Tldconf -g
+LDFLAGS = -melf_i386 -Tkernel.ld -g
 
 all: ${BUILDDIR} ${OBJDIR} ${KERNEL}
 
