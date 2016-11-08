@@ -66,4 +66,7 @@ struct multiboot_apm_table {
 	uint16_t dseg_len;
 } __attribute__((packed));
 
+// fixes the multiboot_info struct for kernel offset
+void fix_multiboot_info(struct multiboot_info *mbinfo);
+
 #endif

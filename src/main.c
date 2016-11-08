@@ -7,9 +7,14 @@
 #include "pic.h"
 #include "kbc.h"
 
+extern const void kernel_start;
+extern const void kernel_end;
+
 void init(struct multiboot_info *multiboot_info) {
+	fix_multiboot_info(multiboot_info);
+
 	kclear();
-	kprintf("Hello World.\n");
+	kprintf("kernel start 0x%x end 0x%x\n", (size_t)&kernel_start, (size_t)&kernel_end);
 	kprintf("Now starting up.\n\n");
 
 	pfa_init(multiboot_info);
@@ -28,11 +33,13 @@ void init(struct multiboot_info *multiboot_info) {
 	kprintf("Now enabling interrupts\n");
 	asm volatile("sti");
 
-	kprintf("Enabling paging\n");
-	paging_init();
+	//kprintf("Enabling paging\n");
+	//paging_init();
 
 	kprintf("KBC init\n");
 	kbc_init();
 
-	while (1);
+	while (1) {
+		asm volatile("hlt");
+	}
 }
